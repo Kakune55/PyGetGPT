@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KakuAI</title>
+    <link rel="stylesheet" type="text/css" href="popup.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url("img/bg_circles.png");
+        background-repeat: repeat;
+        }
+        #chat-container {
+            width: 80%; /* 使用百分比宽度 */
+            max-width: 1300px; /* 最大宽度，防止界面变得过宽 */
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        #chat-messages {
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            word-wrap: break-word; /* 自动换行 */
+            white-space: pre-wrap; /* 保留空格并自动换行 */
+        }
+        .message-divider {
+            border-top: 1px solid #ccc;
+            margin: 10px 0;
+        }
+        #user-input {
+            width: 97%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        #user-input:focus {
+            outline: none;
+        }
+        #user-input::placeholder {
+            color: #999;
+        }
+        #user-input-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        #user-input-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        /* 新增样式 */
+        #additional-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* 左右对齐 */
+            margin-top: 10px;
+        }
+        #additional-controls input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        #additional-controls button {
+            background-color: #466d2b;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body onload="checkCookie()">
+    <div id="chat-container">
+        <div id="chat-messages"></div>
+        <input type="text" id="user-input" placeholder="输入消息..."> <!-- 用户输入消息的输入框 -->
+        <button id="user-input-button" disabled>发送</button> <!-- 发送消息按钮初始状态禁用 -->
+        <!-- 新增复选框、文本和附加功能按钮 -->
+        <div id="additional-controls">
+            <label>
+                <input type="checkbox" id="additional-checkbox"> 联系上文 <a id="showtoken"><br>剩余Token将会被显示在这里</a>
+            </label>
+            <button id="additional-button">设置</button>
+        </div>
+    </div>
+
+    <div id="popup-container" class="hidden"> <!--菜单部分-->
+        <div id="popup">
+            <button id="close-popup">关闭</button>
+            <h1>设置</h1>
+            <p>使用的AI模型</p>
+            <select id="setUpDropdown" defaultValue="qwen-turbo">
+                <option value="qwen-turbo">qwen-turbo</option>
+                <option value="chatglm-turbo">chatglmTurbo</option>
+            </select>
+            <hr>
+            <h3>当前UserKey</h3>
+            <a id="showUserKey"><br>当前UserKey将会被显示在这里</a>
+            <hr>
+            <div id="buttons">
+                <button id="setUpButton1">设置UserKey</button>
+                <button id="setUpButton2" onclick="window.location.href = 'https://afdian.net/a/kaku55'">获取更多Token</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chat-messages'); // 聊天消息容器
+        const userInput = document.getElementById('user-input'); // 用户输入消息的输入框
+        const sendButton = document.getElementById('user-input-button'); // 发送消息按钮
+        const additionalButton = document.getElementById('additional-button'); // 附加功能按钮
+        const additionalCheckbox = document.getElementById('additional-checkbox'); // 复选框
+        const popupContainer = document.getElementById('popup-container'); // 菜单容器
+        const closePopup = document.getElementById('close-popup'); // 关闭菜单按钮
+        const setUpButton1 = document.getElementById('setUpButton1');// 菜单按钮1
+
+        var userhs1 = "x"; // 历史记录的保存
+        var userhs0 = "x";
+        var boths1 = "x";
+        var boths0 = "x";
+
+        // 关闭菜单
+        closePopup.addEventListener('click', () => {
+            popupContainer.style.right = '-100%';
+            popupContainer.classList.add('hidden');
+        });
+
+        // 点击发送按钮后的处理函数
+        sendButton.addEventListener('click', sendMessage);
+        // 用户输入消息后的处理函数
+        userInput.addEventListener('input', handleUserInput);
+        // 点击附加功能按钮后的处理函数
+        additionalButton.addEventListener('click', additionalFunction);
+        // 菜单按钮的处理函数
+        setUpButton1.addEventListener('click',resetCookie);
+
+        // 发送消息函数
+        function sendMessage() {
+            const userMessage = userInput.value; // 获取用户输入的消息
+            appendMessage('你', userMessage); // 在聊天界面中添加用户消息
+            userInput.value = ''; // 清空输入框
+
+            // 立即禁用发送按钮
+            sendButton.disabled = true;
+
+            // 在实际应用中，你可以将用户消息发送到后端进行处理
+            // 在这个示例中，我们模拟了来自助手的响应
+            setTimeout(function() {
+                requestAPI(userMessage);
+            }, 500);
+        }
+
+        // 在聊天界面中添加消息
+        function appendMessage(sender, message) {
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<strong>${sender}:</strong> ${message}`;
+            chatMessages.appendChild(messageDiv);
+
+            // 在每条消息后添加分隔线
+            const divider = document.createElement('div');
+            divider.className = 'message-divider';
+            chatMessages.appendChild(divider);
+        }
+
+        // 附加功能按钮的处理函数
+        function additionalFunction() {
+            // 处理附加功能按钮的点击事件
+            popupContainer.classList.remove('hidden');
+            popupContainer.style.right = '0';
+        }
+
+        // 用户输入框的输入事件处理函数
+        function handleUserInput() {
+            // 根据用户输入的内容启用或禁用发送按钮
+            sendButton.disabled = userInput.value.trim() === '';
+        }
+
+        // 使用Cookie保存用户的UserKey
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toGMTString();
+            document.cookie = cname + "=" + cvalue + "; " + expires;
+        }
+            function getCookie(cname) {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i].trim();
+                if (c.indexOf(name) == 0) { return c.substring(name.length, c.length); }
+            }
+            return "";
+        }
+            function checkCookie() {
+            var user = getCookie("userkey");
+            if (user != "") {
+                alert("欢迎回来 UserKey：" + user);
+                document.getElementById("showUserKey").innerHTML = user;
+            }
+            else {
+                user = prompt("请输入你的Userkey:", "");
+                if (user != "" && user != null) {
+                setCookie("userkey", user, 265);
+                }
+            }
+        }
+            function resetCookie() {
+            user = prompt("请输入你的Userkey:", "");
+            if (user != "" && user != null) {
+                setCookie("userkey", user, 265);
+                alert("UserKey已更新");
+                document.getElementById("showUserKey").innerHTML = user;
+            }
+        }
+
+
+            function requestAPI(message) {
+            // 创建包含JSON数据的对象
+            var requestData = {
+                "model":document.getElementById("setUpDropdown").value,
+                "prompt": message,
+                "userkey": getCookie("userkey"),
+                "context": Number(additionalCheckbox.checked),
+                "history": [
+                {
+                    "user": userhs1 ,
+                    "bot": boths1
+                },
+                {
+                    "user": userhs0,
+                    "bot": boths0
+                }
+                ]
+            };
+
+                
+            fetch("http://chat.kakuweb.top:5000/api/user", {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+                })
+            .then(response => response.json())
+            .then(data => {
+                // 在这里处理返回的JSON数据
+            if (data["code"] == 200) {
+                appendMessage("KakuAI"+"("+document.getElementById("setUpDropdown").value+")",data["output"]);
+                    document.getElementById("showtoken").innerHTML = "<br>剩余Tokens:" + data["surplus"];
+                }
+            else{
+                    alert("ErrCode:"+data["code"]+" "+data["output"])
+                }
+            userhs1 = userhs0;
+            boths1 = boths0;
+            userhs0 = message;
+            boths0 = data["output"];
+            loading = false;
+                // 可以根据返回的数据执行相应的操作
+            })
+            .catch(error => {
+            console.error('请求出错:', error);
+            });
+
+
+            }
+
+
+    </script>
+</body>
+</html>

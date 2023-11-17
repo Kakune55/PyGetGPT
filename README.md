@@ -1,0 +1,3 @@
+# PyGetGPT
+使用python构建的简易语言模型api调用系统
+使用web页面作为GUI易于部署

@@ -93,6 +93,7 @@
         <input type="text" id="user-input" placeholder="输入消息..."> <!-- 用户输入消息的输入框 -->
         <button id="user-input-button" disabled>发送</button> <!-- 发送消息按钮初始状态禁用 -->
         <!-- 新增复选框、文本和附加功能按钮 -->
+        <img id="loadingico" alt="Loading..." src="https://www.intogif.com/resource/image/loading/radio.gif" style="height: 50px;transform: translate(10px, 20px);display: none;"/>
         <div id="additional-controls">
             <label>
                 <input type="checkbox" id="additional-checkbox"> 联系上文 <a id="showtoken"><br>剩余Token将会被显示在这里</a>
@@ -106,7 +107,7 @@
             <button id="close-popup">关闭</button>
             <h1>设置</h1>
             <p>使用的AI模型</p>
-            <select id="setUpDropdown" defaultValue="qwen-turbo">
+            <select id="setUpDropdown" defaultValue="qwen-turbo" onchange="setCookie('modelSet', document.getElementById('setUpDropdown').value, 265)">
                 <option value="qwen-turbo">qwen-turbo</option>
                 <option value="chatglm-turbo">chatglmTurbo</option>
             </select>
@@ -153,6 +154,7 @@
 
         // 发送消息函数
         function sendMessage() {
+            document.getElementById("loadingico").style.display = "";
             const userMessage = userInput.value; // 获取用户输入的消息
             appendMessage('你', userMessage); // 在聊天界面中添加用户消息
             userInput.value = ''; // 清空输入框
@@ -213,11 +215,13 @@
             if (user != "") {
                 alert("欢迎回来 UserKey：" + user);
                 document.getElementById("showUserKey").innerHTML = user;
+                document.getElementById('setUpDropdown').value = getCookie("modelSet");
             }
             else {
                 user = prompt("请输入你的Userkey:", "");
                 if (user != "" && user != null) {
                 setCookie("userkey", user, 265);
+                setCookie('modelSet', document.getElementById('setUpDropdown').value, 265);
                 }
             }
         }
@@ -273,10 +277,12 @@
             userhs0 = message;
             boths0 = data["output"];
             loading = false;
+            document.getElementById("loadingico").style.display = "none";
                 // 可以根据返回的数据执行相应的操作
             })
             .catch(error => {
             console.error('请求出错:', error);
+            alert('请求出错:', error);
             });
 
 

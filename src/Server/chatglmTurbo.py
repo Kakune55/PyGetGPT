@@ -22,6 +22,6 @@ def service(prompt,history = ""):
             ]
         )
     if response["code"] == 200:
-        return 200, response["data"]["choices"][0]["content"], response["data"]["usage"]['total_tokens']
+        return 200, str(response["data"]["choices"][0]["content"]).split('"')[1], response["data"]["usage"]['total_tokens']
     else:
         return 50 , str(response["code"])+response["msg"], 0

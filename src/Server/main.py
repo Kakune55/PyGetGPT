@@ -1,6 +1,6 @@
 import flask , requests , json 
 from flask_cors import CORS
-import db , qwenTurbo ,chatglmTurbo
+import db , qwenTurbo , chatglmTurbo , gpt35Turbo 
 
 
 
@@ -35,6 +35,12 @@ def post_data():
             code , output , tokenUsed = chatglmTurbo.service(userRequest['prompt'],userRequest['history'])
         elif userRequest["context"] == 0:
             code , output , tokenUsed = chatglmTurbo.service(userRequest['prompt'])
+
+    if userRequest["model"] == "gpt3.5-turbo": # 调用gpt3.5-turbo
+        if userRequest["context"] == 1: # 是否使用上文关联
+            code , output , tokenUsed = gpt35Turbo.service(userRequest['prompt'],userRequest['history'])
+        elif userRequest["context"] == 0:
+            code , output , tokenUsed = gpt35Turbo.service(userRequest['prompt'])
 
 
 

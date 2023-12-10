@@ -5,6 +5,7 @@ from apiModule import qwenTurbo , chatglmTurbo , gpt35Turbo , gpt4Turbo
 
 app = flask.Flask(__name__)
 CORS(app,origins="*")
+app.secret_key = b'SQ-{kJE;m(jEBi|{yq]v'
 
 @app.route('/api/user', methods=['POST'])
 def post_data():
@@ -49,9 +50,28 @@ def post_data():
     db.reduce_value(userRequest['userkey'], tokenUsed)
     return {"code":code,"output":output,"surplus":surplusToken}
 
+
 @app.route('/')
 def index():
     return flask.render_template('index.html')
+
+
+@app.route('/login', methods=['POST','GET'])
+def login():
+    if flask.request.method == 'GET':
+        return flask.render_template('login.html')
+    userRequest = flask.request.form
+    if userRequest["password"] != config.readConf()["appconf"]["adminkey"]:
+        return flask.render_template('login.html')
+    flask.session["admin"] = True
+    return flask.redirect(flask.url_for('admin'))
+
+
+@app.route('/admin')
+def admin():
+    if "admin" in flask.session :
+        return "管理页"
+    return "未登录"
 
 
 if __name__ == '__main__':

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>网站后台展示页</title>
+<style>
+  body {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    background-color: #f7f7f7;
+    padding: 20px;
+  }
+  .container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  th {
+    background-color: #f2f2f2;
+  }
+  .green {
+    color: green;
+  }
+  .red {
+    color: red;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>网站后台展示页</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>项目</th>
+        <th>状态</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>网站访问速度</td>
+        <td class="green">正常</td>
+      </tr>
+      <tr>
+        <td>数据库连接</td>
+        <td class="green">正常</td>
+      </tr>
+      <tr>
+        <td>服务器负载</td>
+        <td class="red">较高</td>
+      </tr>
+      <tr>
+        <td>在线用户数</td>
+        <td class="green">正常</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+// 在这里可以添加一些交互逻辑，例如点击某个状态显示更多信息
+</script>
+</body>
+</html>

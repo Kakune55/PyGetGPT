@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KakuAI</title>
-    <link rel="stylesheet" type="text/css" href="popup.css">
+    <link rel="stylesheet" type="text/css" href="../static/popup.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,7 +15,7 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-image: url("img/bg_circles.png");
+            background-image: url("../static/img/bg_circles.png");
         background-repeat: repeat;
         }
         #chat-container {
@@ -215,7 +215,7 @@
             function checkCookie() {
             var user = getCookie("userkey");
             if (user != "") {
-                alert("欢迎回来 UserKey：" + user);
+                alert("欢迎回来 UserKey：" + user +"\n当前选择模型：" + getCookie("modelSet"));
                 document.getElementById("showUserKey").innerHTML = user;
                 document.getElementById('setUpDropdown').value = getCookie("modelSet");
             }

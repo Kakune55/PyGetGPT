@@ -1,9 +1,7 @@
-import flask , requests , json 
+import flask
 from flask_cors import CORS
-import db , qwenTurbo , chatglmTurbo , gpt35Turbo , gpt4Turbo
-
-
-
+import db , config 
+from apiModule import qwenTurbo , chatglmTurbo , gpt35Turbo , gpt4Turbo
 
 app = flask.Flask(__name__)
 CORS(app,origins="*")
@@ -48,13 +46,13 @@ def post_data():
         elif userRequest["context"] == 0:
             code , output , tokenUsed = gpt4Turbo.service(userRequest['prompt']) 
 
-
-
-
-
     db.reduce_value(userRequest['userkey'], tokenUsed)
     return {"code":code,"output":output,"surplus":surplusToken}
 
+@app.route('/')
+def index():
+    return flask.render_template('index.html')
+
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0',port=5000)
+    app.run(debug=bool(config.readConf()["appconf"]["debug"]),host=config.readConf()["appconf"]["host"],port=config.readConf()["appconf"]["port"])

@@ -70,8 +70,33 @@ def login():
 @app.route('/admin')
 def admin():
     if "admin" in flask.session :
-        return "管理页"
+        status = {}
+        status["db"] = db.dbIsOK()
+        return flask.render_template("status.html" ,status=status)
     return "未登录"
+
+
+@app.route('/admin/list')
+def adminList():
+    if "admin" in flask.session :
+        data = db.getAllKey()
+        return flask.render_template("keylist.html",data=data)
+    return "未登录 "
+
+@app.route('/admin/createkey')
+def createkey():
+    if "admin" in flask.session :
+        return flask.render_template("createKey.html")
+    return "未登录 "
+
+@app.route('/admin/operate', methods=['POST','GET'])
+def operate():
+    if "admin" in flask.session :
+        if flask.request.args['type'] == "del":
+            if db.delKey(flask.request.args['target']):
+                return "成功 <a href='javascript:;' onclick='self.location=document.referrer;'>返回上一页并刷新</a>"
+            return "失败 <a href='javascript:;' onclick='self.location=document.referrer;'>返回上一页并刷新</a>"
+    return "拒绝访问"
 
 
 if __name__ == '__main__':

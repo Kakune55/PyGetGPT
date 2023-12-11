@@ -83,10 +83,17 @@ def adminList():
         return flask.render_template("keylist.html",data=data)
     return "未登录 "
 
-@app.route('/admin/createkey')
+@app.route('/admin/createkey', methods=['POST','GET'])
 def createkey():
     if "admin" in flask.session :
-        return flask.render_template("createKey.html")
+        if flask.request.method == "GET":
+            return flask.render_template("createKey.html",resq="null")
+        if  "number" in flask.request.form: # 创建单个还是多个
+            resq = db.createKey(flask.request.form["quota"], flask.request.form["number"])
+        elif "key" in flask.request.form:
+            resq = db.createKey(flask.request.form["quota"],1,flask.request.form["key"])
+
+        return flask.render_template("createKey.html",resq=resq)
     return "未登录 "
 
 @app.route('/admin/operate', methods=['POST','GET'])

@@ -1,4 +1,4 @@
-import pymysql , config
+import pymysql , config , uuid
 
 def dbIsOK():
     #打开数据库连接
@@ -110,4 +110,33 @@ def delKey(userkey):
         return True
     db.close()
     return False
+
+
+def createKey(quota,number=1,key="null"):
+    #打开数据库连接
+    db = pymysql.connect(host=config.readConf()["db"]["host"],
+                     port=config.readConf()["db"]["port"],
+                     user=config.readConf()["db"]["user"],
+                     password=config.readConf()["db"]["passwd"],
+                     database=config.readConf()["db"]["database"])
+    # 使用 cursor() 方法创建一个游标对象 cursor
+    cursor = db.cursor()
+ 
+    # 使用 execute()  方法执行 SQL 查询 
+    output = []
+    if key == "null":
+        for i in range(int(number)):
+            key = str(uuid.uuid1())
+            output.append(key)
+            cursor.execute(f"INSERT INTO usersurplus (userkey,surplus) VALUES ('{key}',{int(quota)});")
+    else:
+        cursor.execute(f"INSERT INTO usersurplus (userkey,surplus) VALUES ('{key}',{int(quota)});")
+        output.append(key)
+
+    # 提交事务
+    db.commit()
+
+    db.close()
+
+    return output
 

@@ -5,6 +5,7 @@ from apiModule import qwenTurbo , chatglmTurbo , gpt35Turbo , gpt4Turbo
 
 app = flask.Flask(__name__)
 CORS(app,origins="*")
+app.secret_key = b'SQ-{kJE;m(jEBi|{yq]v'
 
 @app.route('/api/user', methods=['POST'])
 def post_data():
@@ -49,9 +50,69 @@ def post_data():
     db.reduce_value(userRequest['userkey'], tokenUsed)
     return {"code":code,"output":output,"surplus":surplusToken}
 
+
 @app.route('/')
 def index():
     return flask.render_template('index.html')
+
+
+@app.route('/login', methods=['POST','GET'])
+def login():
+    if flask.request.method == 'GET':
+        return flask.render_template('login.html')
+    userRequest = flask.request.form
+    if userRequest["password"] != config.readConf()["appconf"]["adminkey"]:
+        return flask.render_template('login.html')
+    flask.session["admin"] = True
+    return flask.redirect(flask.url_for('admin'))
+
+
+@app.route('/admin')
+def admin():
+    if "admin" in flask.session :
+        status = {}
+        status["db"] = db.dbIsOK()
+        return flask.render_template("status.html" ,status=status)
+    return "未登录"
+
+
+@app.route('/admin/list')
+def adminList():
+    if "admin" in flask.session :
+        data = db.getAllKey()
+        return flask.render_template("keylist.html",data=data)
+    return "未登录 "
+
+@app.route('/admin/createkey', methods=['POST','GET'])
+def createkey():
+    if "admin" in flask.session :
+        if flask.request.method == "GET":
+            return flask.render_template("createKey.html",resq="null")
+        if  "number" in flask.request.form: # 创建单个还是多个
+            resq = db.createKey(flask.request.form["quota"], flask.request.form["number"])
+        elif "key" in flask.request.form:
+            resq = db.createKey(flask.request.form["quota"],1,flask.request.form["key"])
+
+        return flask.render_template("createKey.html",resq=resq)
+    return "未登录 "
+
+@app.route('/admin/lookupkey', methods=['POST','GET'])
+def lookupkey():
+    if "admin" in flask.session :
+        if flask.request.method == "GET":
+            return flask.render_template("lookupKey.html",resq="null")
+        resq = db.userSurplus(flask.request.form["key"])
+        return flask.render_template("lookupKey.html",resq=resq)
+    return "未登录 "
+
+@app.route('/admin/operate', methods=['POST','GET'])
+def operate():
+    if "admin" in flask.session :
+        if flask.request.args['type'] == "del":
+            if db.delKey(flask.request.args['target']):
+                return "成功 <a href='javascript:;' onclick='self.location=document.referrer;'>返回上一页并刷新</a>"
+            return "失败 <a href='javascript:;' onclick='self.location=document.referrer;'>返回上一页并刷新</a>"
+    return "拒绝访问"
 
 
 if __name__ == '__main__':

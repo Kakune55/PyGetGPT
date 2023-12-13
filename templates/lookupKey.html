@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>查询密钥</title>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>查询密钥</h2>
+        <form method="post">
+            <span>UserKey</span>
+            <input name="key" required>
+            <button type="submit">查询</button>
+        </form>
+    </div>
+    {% if resq != "null" %}
+    <hr>
+    <div class="container">
+        <h2>执行结果</h2>
+        {% if resq == -99999 %}
+        <h4>未找到UserKey</h4>
+        {% else %}
+        <h4>配额剩余 {{ resq }}</h4>
+        {% endif %}
+    </div>
+    {% endif %}
+    <script>
+
+    </script>
+</body>
+
+</html>

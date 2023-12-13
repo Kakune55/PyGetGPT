@@ -96,6 +96,15 @@ def createkey():
         return flask.render_template("createKey.html",resq=resq)
     return "未登录 "
 
+@app.route('/admin/lookupkey', methods=['POST','GET'])
+def lookupkey():
+    if "admin" in flask.session :
+        if flask.request.method == "GET":
+            return flask.render_template("lookupKey.html",resq="null")
+        resq = db.userSurplus(flask.request.form["key"])
+        return flask.render_template("lookupKey.html",resq=resq)
+    return "未登录 "
+
 @app.route('/admin/operate', methods=['POST','GET'])
 def operate():
     if "admin" in flask.session :

@@ -12,7 +12,7 @@ def userSurplus(userkey):
     cursor = db.cursor()
  
     # 使用 execute()  方法执行 SQL 查询 
-    cursor.execute(f"SELECT surplus FROM usersurplus WHERE userkey = '{userkey}';")
+    cursor.execute(f"SELECT surplus FROM usersurplus WHERE userkey = %s;",[userkey])
     # 使用 fetchone() 方法获取单条数据.
     data = cursor.fetchone()
 
@@ -34,7 +34,7 @@ def reduce_value(userkey, value):  # 减去对应的值
     cursor = db.cursor()
 
     # 执行 SQL 查询以获取当前值
-    cursor.execute(f"SELECT surplus FROM usersurplus WHERE userkey = '{userkey}';")
+    cursor.execute(f"SELECT surplus FROM usersurplus WHERE userkey = %s;",[userkey])
     current_value = cursor.fetchone()[0]
 
     # 如果没有找到用户，则返回错误信息
@@ -46,7 +46,7 @@ def reduce_value(userkey, value):  # 减去对应的值
     new_value = current_value - value
 
     # 更新数据库中的值
-    cursor.execute(f"UPDATE usersurplus SET surplus={new_value} WHERE userkey='{userkey}'")
+    cursor.execute(f"UPDATE usersurplus SET surplus= %s WHERE userkey=%s",[new_value,userkey])
 
     # 提交事务
     db.commit()

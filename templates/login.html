@@ -57,7 +57,10 @@
         </form>
     </div>
     <script>
-
+        const info = '<%=request.getParameter("info")%>';
+        if (info === 'nologin') {
+            alert("未登录或登录已过期！\n请重新登录");
+        }
     </script>
 </body>
 

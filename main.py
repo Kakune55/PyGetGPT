@@ -61,7 +61,7 @@ def login():
     if flask.request.method == 'GET':
         return flask.render_template('login.html')
     userRequest = flask.request.form
-    if userRequest["password"] != config.readConf()["appconf"]["adminkey"]:
+    if userRequest["password"] != config.readConf()["adminkey"]:
         return flask.render_template('login.html')
     flask.session["admin"] = True
     return flask.redirect(flask.url_for('admin'))

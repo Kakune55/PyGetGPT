@@ -73,7 +73,7 @@ def admin():
         status = {}
         status["db"] = db.dbIsOK()
         return flask.render_template("status.html" ,status=status)
-    return flask.redirect(flask.url_for('login?info=nologin'))
+    return flask.redirect('login')
 
 
 @app.route('/admin/list')
@@ -81,7 +81,7 @@ def adminList():
     if "admin" in flask.session :
         data = db.getAllKey()
         return flask.render_template("keylist.html",data=data)
-    return flask.redirect(flask.url_for('login?info=nologin'))
+    return flask.redirect('login')
 
 @app.route('/admin/createkey', methods=['POST','GET'])
 def createkey():
@@ -94,7 +94,7 @@ def createkey():
             resq = db.createKey(flask.request.form["quota"],1,flask.request.form["key"])
 
         return flask.render_template("createKey.html",resq=resq)
-    return flask.redirect(flask.url_for('login?info=nologin'))
+    return flask.redirect('login')
 
 @app.route('/admin/lookupkey', methods=['POST','GET'])
 def lookupkey():
@@ -103,7 +103,7 @@ def lookupkey():
             return flask.render_template("lookupKey.html",resq="null")
         resq = db.userSurplus(flask.request.form["key"])
         return flask.render_template("lookupKey.html",resq=resq)
-    return flask.redirect(flask.url_for('login?info=nologin'))
+    return flask.redirect('login')
 
 @app.route('/admin/operate', methods=['POST','GET'])
 def operate():

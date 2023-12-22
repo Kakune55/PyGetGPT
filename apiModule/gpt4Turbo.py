@@ -1,7 +1,7 @@
 import openai , config
 
-openai.api_key = config.readConf()["gpt3.5turbo"]["Authorization"]
-openai.base_url = config.readConf()["gpt3.5turbo"]["url"]
+openai.api_key = config.readConf()["gpt4.0turbo"]["Authorization"]
+openai.base_url = config.readConf()["gpt4.0turbo"]["url"]
 
 def service(prompt,history = ""):
     if history == "":

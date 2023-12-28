@@ -85,6 +85,13 @@ def adminList():
         return flask.render_template("keylist.html",data=data)
     return flask.redirect('login')
 
+@app.route('/api/modelcount')
+def apiModelCount():
+    if "admin" in flask.session :
+        data = log.modelChartsData()
+        return data
+    return flask.abort(403)
+
 @app.route('/admin/log', methods=['GET'])
 def adminListLog():
     if "admin" in flask.session :

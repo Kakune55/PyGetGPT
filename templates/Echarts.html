@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <script src="../static/echarts.min.js"></script>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: #f7f7f7;
+            padding: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main" style="width: 600px;height:400px;"></div>
+    <script type="text/javascript">
+        const apiURL = '/api/modelcount';
+        datajson = null
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('main'));
+        //使用fetch API发送GET请求
+        fetch(apiURL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json(); // 确保返回的是JSON对象
+            })
+            .then(data => {
+                // 确保 data 是一个数组，并且每个元素都有 value 和 name 属性
+                if (data && Array.isArray(data) && data.every(item => item.value && item.name)) {
+                    myChart.setOption({
+                        title: {
+                            text: '模型调用',
+                            left: 'center',
+                            top: 'center',
+                            textStyle:{
+                                fontSize: '25',
+                                fontWeight:'bold'
+                            } 
+                        },
+                        series: [{
+                            name: '模型调用',
+                            type: 'pie',
+                            radius: '55%',
+                            data: data,
+                            radius: ['30%', '65%'],
+                            label: {
+                                show: true, //开启显示
+                                fontSize: '16',
+                                formatter: '{b}:{c}' + '\n\r' + '({d}%)',
+                                fontWeight:'bold'
+                            }
+                        }]
+                    });
+                } else {
+                    console.error('Data received is not in the correct format for ECharts pie chart:', data);
+                }
+            })
+            .catch(error => {
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+    </script>
+</body>
+
+</html>

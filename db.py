@@ -55,7 +55,7 @@ def userSurplus(userkey): #查询userkey剩余配额
     cursor = db.cursor()
  
     # 使用 execute()  方法执行 SQL 查询 
-    cursor.execute(f"SELECT surplus FROM usersurplus WHERE userkey = ?;",[userkey])
+    cursor.execute("SELECT surplus FROM usersurplus WHERE userkey = ?;",[userkey])
     # 使用 fetchone() 方法获取单条数据.
     data = cursor.fetchone()
 
@@ -73,7 +73,7 @@ def reduce_value(userkey, value):  # 减去对应的值
     cursor = db.cursor()
 
     # 执行 SQL 查询以获取当前值
-    cursor.execute(f"SELECT surplus FROM usersurplus WHERE userkey = ?;",[userkey])
+    cursor.execute("SELECT surplus FROM usersurplus WHERE userkey = ?;",[userkey])
     current_value = cursor.fetchone()[0]
 
     # 如果没有找到用户，则返回错误信息
@@ -85,7 +85,7 @@ def reduce_value(userkey, value):  # 减去对应的值
     new_value = current_value - value
 
     # 更新数据库中的值
-    cursor.execute(f"UPDATE usersurplus SET surplus= ? WHERE userkey= ?;",[new_value,userkey])
+    cursor.execute("UPDATE usersurplus SET surplus= ? WHERE userkey= ?;",[new_value,userkey])
 
     # 提交事务
     db.commit()
@@ -103,7 +103,7 @@ def getAllKey():
     cursor = db.cursor()
  
     # 使用 execute()  方法执行 SQL 查询 
-    cursor.execute(f"SELECT * FROM usersurplus ;")
+    cursor.execute("SELECT * FROM usersurplus ;")
     # 使用 fetchall() 方法获取结果集
     data = cursor.fetchall()
 
@@ -120,7 +120,7 @@ def delKey(userkey):
     cursor = db.cursor()
  
     # 使用 execute()  方法执行 SQL 查询 
-    cursor.execute(f"DELETE FROM usersurplus WHERE userkey = ?;", [userkey])
+    cursor.execute("DELETE FROM usersurplus WHERE userkey = ?;", [userkey])
 
     # 提交事务
     db.commit()
@@ -145,9 +145,9 @@ def createKey(quota,number=1,key="null"):
         for i in range(int(number)):
             key = str(uuid.uuid1())
             output.append(key)
-            cursor.execute(f"INSERT INTO usersurplus (userkey,surplus) VALUES (?, ?);", [key, quota])
+            cursor.execute("INSERT INTO usersurplus (userkey,surplus) VALUES (?, ?);", [key, quota])
     else:
-        cursor.execute(f"INSERT INTO usersurplus (userkey,surplus) VALUES (?, ?);", [key, quota])
+        cursor.execute("INSERT INTO usersurplus (userkey,surplus) VALUES (?, ?);", [key, quota])
         output.append(key)
 
 
@@ -167,7 +167,7 @@ def newLog(ip:str, time:int, tokens:int, model:str, userkey:str):
  
     # 使用 execute()  方法执行 SQL 查询 
 
-    cursor.execute(f"INSERT INTO log (ip, time, tokens, model, userkey) VALUES (?, ?, ?, ?, ?);", [ip, time, tokens, model, userkey])
+    cursor.execute("INSERT INTO log (ip, time, tokens, model, userkey) VALUES (?, ?, ?, ?, ?);", [ip, time, tokens, model, userkey])
 
     # 提交事务
     db.commit()
@@ -182,7 +182,7 @@ def getlog(num:int):
     cursor = db.cursor()
  
     # 使用 execute()  方法执行 SQL 查询 
-    cursor.execute(f"SELECT * FROM log order by time desc limit ?;", [num])
+    cursor.execute("SELECT * FROM log order by time desc limit ?;", [num])
     # 使用 fetchall() 方法获取结果集
     data = cursor.fetchall()
 
@@ -190,3 +190,37 @@ def getlog(num:int):
     db.close()
 
     return data
+
+def getLogAllModel():
+        #打开数据库连接
+    db = getconn()
+    # 使用 cursor() 方法创建一个游标对象 cursor
+    cursor = db.cursor()
+ 
+    # 使用 execute()  方法执行 SQL 查询 
+    cursor.execute("SELECT DISTINCT model FROM log ;")
+    # 使用 fetchall() 方法获取结果集
+    data = cursor.fetchall()
+
+    # 关闭连接
+    db.close()
+
+    return data
+
+def countLog(key:str, value:str):
+        #打开数据库连接
+    db = getconn()
+    # 使用 cursor() 方法创建一个游标对象 cursor
+    cursor = db.cursor()
+    try:
+        # 使用 execute()  方法执行 SQL 查询 
+        cursor.execute(f"SELECT COUNT(*) FROM log WHERE {key} = ?;", [value])
+        # 使用 fetchone() 方法获取结果
+        data = cursor.fetchone()
+
+        # 关闭连接
+        db.close()
+    except Exception as e:
+        return e
+
+    return data[0]

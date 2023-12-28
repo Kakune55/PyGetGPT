@@ -1,3 +1,4 @@
+import json
 import time as times
 import db
 
@@ -16,4 +17,10 @@ def getlog(num:int):
 
     return data
 
+def modelChartsData(): #按模型用量统计
+    data = []
+    model = db.getLogAllModel()
+    for item in model:
+        data.append({'value':db.countLog("model",item[0]),'name':item[0]})
+    return data
     

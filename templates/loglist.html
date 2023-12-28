@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<title>列出日志</title>
+	<style>
+		body {
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			background-color: #f7f7f7;
+			padding: 20px;
+		}
+
+		.container {
+			background-color: #fff;
+			padding: 20px;
+			border-radius: 8px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			border: 1px solid #ddd;
+			padding: 8px;
+			text-align: left;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="container">
+		<h2>列出日志</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>IP</th>
+					<th>时间</th>
+					<th>token用量</th>
+					<th>使用模型</th>
+					<th>UserKey</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for item in data %}
+				<tr>
+					<td>{{item[0]}}</td>
+					<td>{{item[1]}}</td>
+					<td>{{item[2]}}</td>
+					<td>{{item[3]}}</td>
+					<td>{{item[4]}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	<hr/>
+
+	<script>
+		// 在这里可以添加一些交互逻辑，例如点击某个状态显示更多信息
+	</script>
+</body>
+
+</html>

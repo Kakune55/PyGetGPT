@@ -1,11 +1,12 @@
 import flask
 from flask_cors import CORS
-import db , config 
+import db , config , log
 from apiModule import qwenTurbo , chatglmTurbo , gpt35Turbo , gpt4Turbo
 
 app = flask.Flask(__name__)
 CORS(app,origins="*")
 app.secret_key = b'SQ-{kJE;m(jEBi|{yq]v'
+app.config['TRUSTED_PROXIES'] = ['proxy_ip']
 
 @app.route('/api/user', methods=['POST'])
 def post_data():
@@ -48,6 +49,7 @@ def post_data():
             code , output , tokenUsed = gpt4Turbo.service(userRequest['prompt']) 
 
     db.reduce_value(userRequest['userkey'], tokenUsed)
+    log.newLog(flask.request.headers.get('X-Forwarded-For'), tokenUsed, userRequest["model"], userRequest['userkey'])
     return {"code":code,"output":output,"surplus":surplusToken}
 
 
@@ -81,6 +83,20 @@ def adminList():
     if "admin" in flask.session :
         data = db.getAllKey()
         return flask.render_template("keylist.html",data=data)
+    return flask.redirect('login')
+
+@app.route('/admin/log', methods=['GET'])
+def adminListLog():
+    if "admin" in flask.session :
+        if 'show' in flask.request.args:
+            try:
+                shownum = int(flask.request.values.get('show'))
+            except:
+                return flask.abort(400)
+        else:
+            return flask.abort(400)
+        data = log.getlog(shownum)
+        return flask.render_template("loglist.html",data=data)
     return flask.redirect('login')
 
 @app.route('/admin/createkey', methods=['POST','GET'])

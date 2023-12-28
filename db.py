@@ -33,6 +33,15 @@ def init():
             userkey TEXT,
             surplus INT);
         ''')
+    cursor.execute(
+        '''
+        CREATE TABLE log (
+            ip TEXT,
+            time INT,
+            tokens INT,
+            model TEXT,
+            userkey TEXT);
+        ''')
     # 提交事务
     db.commit()
 
@@ -149,3 +158,35 @@ def createKey(quota,number=1,key="null"):
 
     return output
 
+
+def newLog(ip:str, time:int, tokens:int, model:str, userkey:str):
+    #打开数据库连接
+    db = getconn()
+    # 使用 cursor() 方法创建一个游标对象 cursor
+    cursor = db.cursor()
+ 
+    # 使用 execute()  方法执行 SQL 查询 
+
+    cursor.execute(f"INSERT INTO log (ip, time, tokens, model, userkey) VALUES (?, ?, ?, ?, ?);", [ip, time, tokens, model, userkey])
+
+    # 提交事务
+    db.commit()
+
+    db.close()
+
+
+def getlog(num:int):
+    #打开数据库连接
+    db = getconn()
+    # 使用 cursor() 方法创建一个游标对象 cursor
+    cursor = db.cursor()
+ 
+    # 使用 execute()  方法执行 SQL 查询 
+    cursor.execute(f"SELECT * FROM log order by time desc limit ?;", [num])
+    # 使用 fetchall() 方法获取结果集
+    data = cursor.fetchall()
+
+    # 关闭连接
+    db.close()
+
+    return data

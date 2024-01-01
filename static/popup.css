@@ -1,26 +1,34 @@
-#popup-container {
+#global-blur {
+    background-color: rgba(255, 255, 255, 0);
     position: fixed;
     top: 0;
-    right: -100%;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px); /* 模糊度可以根据需要调整 */
+    transition: display;
+    z-index: 1; /* 保证遮罩在页面上方 */
+    pointer-events: none; /* 确保遮罩不影响下方元素的交互 */
+    opacity: 0;
+    transition: opacity 0.3s ease
 }
 
-#popup {
-    position: absolute;
+#popup-container {
+    background-color: #f1f1f1;
+    height: 100%;
+    width: 250px;
+    position: fixed;
     top: 0;
     right: 0;
-    height: 100%;
-    width: 20%;
-    min-width: 150px;
-    min-width: 200px;
-    background: white;
-    padding: 20px;
+    overflow-x: hidden;
+    padding-top: 60px;
+    z-index: 2;
+    transition: transform 0.4s ease;
+    transform: translateX(250px);
 }
 
-.hidden {
-    display: none;
+#popup-container.show {
+    transform: translateX(0);
 }
 
 #close-popup {
@@ -31,17 +39,84 @@
 
 #dropdown {
     margin: auto;
-    width: 80%; /* 让<select>元素宽度占满容器 */
-    margin-bottom: 10px; /* 添加一些底部间距 */
+    width: 80%;
+    /* 让<select>元素宽度占满容器 */
+    margin-bottom: 10px;
+    /* 添加一些底部间距 */
 }
 
 #buttons {
     margin: auto;
     width: 50%;
     display: flex;
-    flex-direction: column; /* 设置按钮垂直排列 */
+    flex-direction: column;
+    /* 设置按钮垂直排列 */
 }
 
 #buttons button {
-    margin: 10px 0; /* 添加按钮之间的垂直间距 */
+    margin: 10px 0;
+    /* 添加按钮之间的垂直间距 */
+}
+
+/* 弹窗消息框CSS */
+
+/* 定义通知框的样式 */
+.notification {
+    display: none;
+    /* 初始状态下通知框不显示 */
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    width: 300px;
+    background-color: #f1f1f1;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    /* 初始透明度为 0，即不可见 */
+    transform: translateY(-20px);
+    /* 初始向上平移20px，用于动画效果 */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    /* 添加过渡效果 */
+}
+
+/* 定义显示状态下的通知框样式 */
+.notification.show {
+    opacity: 1;
+    /* 显示状态下透明度为 1，即完全可见 */
+    transform: translateY(0);
+    /* 平移恢复到原位，显示的过渡效果 */
+}
+
+/* 定义通知框内的内容容器样式 */
+.notification-content {
+    position: relative;
+}
+
+/* 定义关闭按钮的样式 */
+.close {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* 定义进度条样式 */
+.progress-bar {
+    height: 10px;
+    background-color: #ddd;
+    border-radius: 5px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+/* 定义进度条内部样式 */
+.progress-bar-inner {
+    height: 100%;
+    width: 100%;
+    background-color: #4caf50;
+    transition: width 0.3s linear;
+    /* 添加进度条宽度变化的线性过渡效果 */
 }

@@ -1,0 +1,78 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-image: url("../static/img/bg_circles.png");
+background-repeat: repeat;
+}
+#chat-container {
+    width: 80%; /* 使用百分比宽度 */
+    max-width: 1300px; /* 最大宽度，防止界面变得过宽 */
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+#chat-messages {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    word-wrap: break-word; /* 自动换行 */
+    white-space: pre-wrap; /* 保留空格并自动换行 */
+}
+.message-divider {
+    border-top: 1px solid #ccc;
+    margin: 10px 0;
+}
+#user-input {
+    width: 97%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+#user-input:focus {
+    outline: none;
+}
+#user-input::placeholder {
+    color: #999;
+}
+#user-input-button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+#user-input-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+/* 新增样式 */
+#additional-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* 左右对齐 */
+    margin-top: 10px;
+}
+#additional-controls input[type="checkbox"] {
+    margin-right: 10px;
+}
+#additional-controls button {
+    background-color: #466d2b;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+}

@@ -1,99 +1,48 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KakuAI</title>
     <link rel="stylesheet" type="text/css" href="../static/popup.css">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f5f5;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-image: url("../static/img/bg_circles.png");
-        background-repeat: repeat;
-        }
-        #chat-container {
-            width: 80%; /* 使用百分比宽度 */
-            max-width: 1300px; /* 最大宽度，防止界面变得过宽 */
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        #chat-messages {
-            max-height: 500px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            word-wrap: break-word; /* 自动换行 */
-            white-space: pre-wrap; /* 保留空格并自动换行 */
-        }
-        .message-divider {
-            border-top: 1px solid #ccc;
-            margin: 10px 0;
-        }
-        #user-input {
-            width: 97%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        #user-input:focus {
-            outline: none;
-        }
-        #user-input::placeholder {
-            color: #999;
-        }
-        #user-input-button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-        #user-input-button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        /* 新增样式 */
-        #additional-controls {
-            display: flex;
-            align-items: center;
-            justify-content: space-between; /* 左右对齐 */
-            margin-top: 10px;
-        }
-        #additional-controls input[type="checkbox"] {
-            margin-right: 10px;
-        }
-        #additional-controls button {
-            background-color: #466d2b;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="../static/index.css">
+    <link rel="stylesheet" type="text/css" href="../static/loading.css">
 </head>
-<body onload="checkCookie()">
+
+<body onload="init()">
+    <div id="loading" class="loading">
+        <div class="typewriter">
+            <div class="slide"><i></i></div>
+            <div class="paper"></div>
+            <div class="keyboard"></div>
+        </div>
+    </div>
+    <!--全局遮罩-->
+    <div id="global-blur"></div>
+    <!-- 通知框容器 -->
+    <div id="notification" class="notification">
+        <!-- 通知框内容容器 -->
+        <div class="notification-content">
+            <!-- 关闭按钮 -->
+            <span class="close" onclick="closeNotification()">&times;</span>
+            <!-- 通知文本 -->
+            <p id="notificationText">这是一条通知。</p>
+            <!-- 进度条容器 -->
+            <div class="progress-bar">
+                <!-- 进度条内部 -->
+                <div id="progressBarInner" class="progress-bar-inner"></div>
+            </div>
+        </div>
+    </div>
     <div id="chat-container">
         <div id="chat-messages"></div>
         <input type="text" id="user-input" placeholder="输入消息..."> <!-- 用户输入消息的输入框 -->
         <button id="user-input-button" disabled>发送</button> <!-- 发送消息按钮初始状态禁用 -->
         <!-- 新增复选框、文本和附加功能按钮 -->
-        <img id="loadingico" alt="Loading..." src="https://www.intogif.com/resource/image/loading/radio.gif" style="height: 50px;transform: translate(10px, 20px);display: none;"/>
+        <img id="loadingico" alt="Loading..." src="../static/img/loading.gif"
+            style="height: 50px;transform: translate(10px, 20px);display: none;" />
         <div id="additional-controls">
             <label>
                 <input type="checkbox" id="additional-checkbox"> 联系上文 <a id="showtoken"><br>剩余Token将会被显示在这里</a>
@@ -103,11 +52,12 @@
     </div>
 
     <div id="popup-container" class="hidden"> <!--菜单部分-->
-        <div id="popup">
+        <div style="padding: 20px;">
             <button id="close-popup">关闭</button>
             <h1>设置</h1>
             <p>使用的AI模型</p>
-            <select id="setUpDropdown" defaultValue="qwen-turbo" onchange="setCookie('modelSet', document.getElementById('setUpDropdown').value, 265)">
+            <select id="setUpDropdown" defaultValue="qwen-turbo"
+                onchange="setCookie('modelSet', document.getElementById('setUpDropdown').value, 265)">
                 <option value="qwen-turbo">qwen-turbo</option>
                 <option value="chatglm-turbo">chatglmTurbo</option>
                 <option value="gpt3.5-turbo">gpt3.5-turbo(X3 Token)</option>
@@ -119,11 +69,13 @@
             <hr>
             <div id="buttons">
                 <button id="setUpButton1">设置UserKey</button>
-                <button id="setUpButton2" onclick="window.location.href = 'https://afdian.net/a/kaku55'">获取更多Token</button>
+                <button id="setUpButton2"
+                    onclick="window.location.href = 'https://afdian.net/a/kaku55'">获取更多Token</button>
             </div>
         </div>
     </div>
 
+    <script src="../static/popupMessagesBox.js"></script>
     <script>
         const chatMessages = document.getElementById('chat-messages'); // 聊天消息容器
         const userInput = document.getElementById('user-input'); // 用户输入消息的输入框
@@ -133,6 +85,7 @@
         const popupContainer = document.getElementById('popup-container'); // 菜单容器
         const closePopup = document.getElementById('close-popup'); // 关闭菜单按钮
         const setUpButton1 = document.getElementById('setUpButton1');// 菜单按钮1
+        const globalBlur = document.getElementById('global-blur'); //全局遮罩
 
         var userhs1 = "x"; // 历史记录的保存
         var userhs0 = "x";
@@ -141,8 +94,8 @@
 
         // 关闭菜单
         closePopup.addEventListener('click', () => {
-            popupContainer.style.right = '-100%';
-            popupContainer.classList.add('hidden');
+            popupContainer.classList.remove('show');
+            globalBlur.style.opacity = 0;
         });
 
         // 点击发送按钮后的处理函数
@@ -152,7 +105,7 @@
         // 点击附加功能按钮后的处理函数
         additionalButton.addEventListener('click', additionalFunction);
         // 菜单按钮的处理函数
-        setUpButton1.addEventListener('click',resetCookie);
+        setUpButton1.addEventListener('click', resetCookie);
 
         // 发送消息函数
         function sendMessage() {
@@ -166,7 +119,7 @@
 
             // 在实际应用中，你可以将用户消息发送到后端进行处理
             // 在这个示例中，我们模拟了来自助手的响应
-            setTimeout(function() {
+            setTimeout(function () {
                 requestAPI(userMessage);
             }, 500);
         }
@@ -186,8 +139,8 @@
         // 附加功能按钮的处理函数
         function additionalFunction() {
             // 处理附加功能按钮的点击事件
-            popupContainer.classList.remove('hidden');
-            popupContainer.style.right = '0';
+            popupContainer.classList.add('show');
+            globalBlur.style.opacity = 1; //开启毛玻璃效果
         }
 
         // 用户输入框的输入事件处理函数
@@ -203,7 +156,16 @@
             var expires = "expires=" + d.toGMTString();
             document.cookie = cname + "=" + cvalue + "; " + expires;
         }
-            function getCookie(cname) {
+
+        function init() {
+            setTimeout(function () {
+                checkCookie()
+                document.getElementById("loading").style.opacity = 0;
+            }, 1000);
+
+        }
+
+        function getCookie(cname) {
             var name = cname + "=";
             var ca = document.cookie.split(';');
             for (var i = 0; i < ca.length; i++) {
@@ -212,22 +174,22 @@
             }
             return "";
         }
-            function checkCookie() {
+        function checkCookie() {
             var user = getCookie("userkey");
             if (user != "") {
-                alert("欢迎回来 UserKey：" + user +"\n当前选择模型：" + getCookie("modelSet"));
+                showNotification("欢迎回来\nUserKey：" + user + "\n当前选择模型：" + getCookie("modelSet"));
                 document.getElementById("showUserKey").innerHTML = user;
                 document.getElementById('setUpDropdown').value = getCookie("modelSet");
             }
             else {
                 user = prompt("请输入你的Userkey:", "");
                 if (user != "" && user != null) {
-                setCookie("userkey", user, 265);
-                setCookie('modelSet', document.getElementById('setUpDropdown').value, 265);
+                    setCookie("userkey", user, 265);
+                    setCookie('modelSet', document.getElementById('setUpDropdown').value, 265);
                 }
             }
         }
-            function resetCookie() {
+        function resetCookie() {
             user = prompt("请输入你的Userkey:", "");
             if (user != "" && user != null) {
                 setCookie("userkey", user, 265);
@@ -237,60 +199,57 @@
         }
 
 
-            function requestAPI(message) {
+        function requestAPI(message) {
             // 创建包含JSON数据的对象
             var requestData = {
-                "model":document.getElementById("setUpDropdown").value,
+                "model": document.getElementById("setUpDropdown").value,
                 "prompt": message,
                 "userkey": getCookie("userkey"),
                 "context": Number(additionalCheckbox.checked),
                 "history": [
-                {
-                    "user": userhs1 ,
-                    "bot": boths1
-                },
-                {
-                    "user": userhs0,
-                    "bot": boths0
-                }
+                    {
+                        "user": userhs1,
+                        "bot": boths1
+                    },
+                    {
+                        "user": userhs0,
+                        "bot": boths0
+                    }
                 ]
             };
 
-                
+
             fetch("api/user", {
-            method: 'POST',
-            headers: {
-            'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-                })
-            .then(response => response.json())
-            .then(data => {
-                // 在这里处理返回的JSON数据
-            if (data["code"] == 200) {
-                appendMessage("KakuAI"+"("+document.getElementById("setUpDropdown").value+")",data["output"]);
-                    document.getElementById("showtoken").innerHTML = "<br>剩余Tokens:" + data["surplus"];
-                }
-            else{
-                    alert("ErrCode:"+data["code"]+" "+data["output"])
-                }
-            userhs1 = userhs0;
-            boths1 = boths0;
-            userhs0 = message;
-            boths0 = data["output"];
-            loading = false;
-            document.getElementById("loadingico").style.display = "none";
-                // 可以根据返回的数据执行相应的操作
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
             })
-            .catch(error => {
-            console.error('请求出错:', error);
-            alert('请求出错:', error);
-            });
-
-
-            }
-
-
+                .then(response => response.json())
+                .then(data => {
+                    // 在这里处理返回的JSON数据
+                    if (data["code"] == 200) {
+                        appendMessage("KakuAI" + "(" + document.getElementById("setUpDropdown").value + ")", data["output"]);
+                        document.getElementById("showtoken").innerHTML = "<br>剩余Tokens:" + data["surplus"];
+                    }
+                    else {
+                        alert("ErrCode:" + data["code"] + " " + data["output"])
+                    }
+                    userhs1 = userhs0;
+                    boths1 = boths0;
+                    userhs0 = message;
+                    boths0 = data["output"];
+                    loading = false;
+                    document.getElementById("loadingico").style.display = "none";
+                    // 可以根据返回的数据执行相应的操作
+                })
+                .catch(error => {
+                    console.error('请求出错:', error);
+                    alert('请求出错:', error);
+                });
+        }
     </script>
 </body>
+
 </html>

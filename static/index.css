@@ -7,7 +7,7 @@ body {
     height: 100vh;
     margin: 0;
     background-image: url("../static/img/bg_circles.png");
-background-repeat: repeat;
+    background-repeat: repeat;
 }
 #chat-container {
     width: 80%; /* 使用百分比宽度 */

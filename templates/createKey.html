@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>创建密钥</title>
+    <link rel="stylesheet" type="text/css" href="../static/menu.css">
+    <script src="../static/echarts.min.js"></script>
     <style>
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -21,41 +23,52 @@
 </head>
 
 <body>
-    <div class="container">
-        <h2>创建单个密钥</h2>
-        <form method="post">
-            <span>密钥</span>
-            <input name="key" required>
-            <span>配额</span>
-            <input name="quota" required>
-            <button type="submit">创建</button>
-        </form>
+    <div id="global-blur"></div>
+    <div id="sidebar" onmouseover="openNav()" onmouseout="closeNav()">
+        <a href="/admin" class="nodecoration">仪表盘</a>
+        <a href="/admin/list" class="nodecoration">列出所有Key</a>
+        <a href="/admin/lookupkey" class="nodecoration">查询密钥</a>
+        <a href="/admin/createkey" class="nodecoration">创建密钥</a>
+        <a href="/admin/log?show=500" class="nodecoration">查看日志</a>
+        <!-- 添加更多菜单项 -->
     </div>
-    <hr>
-    <div class="container">
-        <h2>批量创建密钥</h2>
-        <form method="post">
-            <input type="radio" id="type" name="type" value="uuid" checked="true">
-            <label for="type">使用UUID</label><br>
-            <span>个数</span>
-            <input name="number" required>
-            <span>配额</span>
-            <input name="quota" required>
-            <button type="submit">批量创建</button>
-        </form>
-    </div>
-    {% if resq != "null" %}
-    <hr>
-    <div class="container">
-        <h2>执行结果</h2>
-        {% for i in resq %}
-        <h4>{{ i }}</h4>
-        {% endfor %}
-    </div>
-    {% endif %}
-    <script>
 
-    </script>
+    <div id="main">
+        <div class="container">
+            <h2>创建单个密钥</h2>
+            <form method="post">
+                <span>密钥</span>
+                <input name="key" required>
+                <span>配额</span>
+                <input name="quota" required>
+                <button type="submit">创建</button>
+            </form>
+        </div>
+        <hr>
+        <div class="container">
+            <h2>批量创建密钥</h2>
+            <form method="post">
+                <input type="radio" id="type" name="type" value="uuid" checked="true">
+                <label for="type">使用UUID</label><br>
+                <span>个数</span>
+                <input name="number" required>
+                <span>配额</span>
+                <input name="quota" required>
+                <button type="submit">批量创建</button>
+            </form>
+        </div>
+        {% if resq != "null" %}
+        <hr>
+        <div class="container">
+            <h2>执行结果</h2>
+            {% for i in resq %}
+            <h4>{{ i }}</h4>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script src="../static/menu.js"></script>
 </body>
 
 </html>

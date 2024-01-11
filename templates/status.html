@@ -4,6 +4,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>后台管理</title>
+	<link rel="stylesheet" type="text/css" href="../static/menu.css">
+	<script src="../static/echarts.min.js"></script>
 	<style>
 		body {
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -42,78 +44,108 @@
 			color: red;
 		}
 
-		.nodecoration{
+		.nodecoration {
 			text-decoration: none;
 		}
 	</style>
 </head>
 
 <body>
-	<div class="container">
-		<h2>概况</h2>
-		{% include 'Echarts.html' %}
-	</div>
-	<hr/>
-	<div class="container">
-		<h2>状态</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>项目</th>
-					<th>状态</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>开发者心态</td>
-					<td class="green">正常</td>
-				</tr>
-				<tr>
-					<td>数据库连接</td>
-					{% if status["db"] == True %}
-					<td class="green">正常</td>
-					{% else %}
-					<td class="red">连接异常</td>
-					{% endif %}
-				</tr>
-				<tr>
-					<td>开发者大脑负载</td>
-					<td class="red">较高</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<hr/>
-	<div class="container">
-		<h2>管理</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>项目</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td><a href="/admin/list" class="nodecoration">列出所有Key</a></td>
-				</tr>
-				<tr>
-					<td><a href="/admin/lookupkey" class="nodecoration">查询密钥</a></td>
-				</tr>
-				<tr>
-					<td><a href="/admin/createkey" class="nodecoration">创建密钥</a></td>
-				</tr>
-				<tr>
-					<td><a href="/admin/log?show=500" class="nodecoration">查看日志</a></td>
-				</tr>
-				<tr>
-					<td>阿巴阿巴</td>
-				</tr>
-			</tbody>
-		</table>
+	<div id="global-blur"></div>
+	<div id="sidebar" onmouseover="openNav()" onmouseout="closeNav()">
+		<a href="/admin" class="nodecoration">仪表盘</a>
+		<a href="/admin/list" class="nodecoration">列出所有Key</a>
+		<a href="/admin/lookupkey" class="nodecoration">查询密钥</a>
+		<a href="/admin/createkey" class="nodecoration">创建密钥</a>
+		<a href="/admin/log?show=500" class="nodecoration">查看日志</a>
+		<!-- 添加更多菜单项 -->
 	</div>
 
-	<script>
+	<div id="main">
+		<div class="container">
+			<h2>概况</h2>
+			<div id="echart1" style="width: 600px;height:400px;"></div>
+		</div>
+		<hr />
+		<div class="container">
+			<h2>状态</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>项目</th>
+						<th>状态</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>开发者心态</td>
+						<td class="green">正常</td>
+					</tr>
+					<tr>
+						<td>数据库连接</td>
+						{% if status["db"] == True %}
+						<td class="green">正常</td>
+						{% else %}
+						<td class="red">连接异常</td>
+						{% endif %}
+					</tr>
+					<tr>
+						<td>开发者大脑负载</td>
+						<td class="red">较高</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
 
+	<script src="../static/menu.js"></script>
+	<script type="text/javascript">
+		const apiURL = '/api/modelcount';
+		datajson = null
+		// 基于准备好的dom，初始化echarts实例
+		var myChart = echarts.init(document.getElementById('echart1'));
+		//使用fetch API发送GET请求
+		fetch(apiURL)
+			.then(response => {
+				if (!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				return response.json(); // 确保返回的是JSON对象
+			})
+			.then(data => {
+				// 确保 data 是一个数组，并且每个元素都有 value 和 name 属性
+				if (data && Array.isArray(data) && data.every(item => item.value && item.name)) {
+					myChart.setOption({
+						title: {
+							text: '模型调用',
+							left: 'center',
+							top: 'center',
+							textStyle: {
+								fontSize: '25',
+								fontWeight: 'bold'
+							}
+						},
+						series: [{
+							name: '模型调用',
+							type: 'pie',
+							radius: '55%',
+							data: data,
+							radius: ['30%', '65%'],
+							label: {
+								show: true, //开启显示
+								fontSize: '16',
+								formatter: '{b}:{c}' + '\n\r' + '({d}%)',
+								fontWeight: 'bold'
+							}
+						}]
+					});
+				} else {
+					console.error('Data received is not in the correct format for ECharts pie chart:', data);
+				}
+			})
+			.catch(error => {
+				console.error('There has been a problem with your fetch operation:', error);
+			});
 	</script>
 </body>
 

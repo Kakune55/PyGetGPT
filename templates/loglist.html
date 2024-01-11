@@ -4,6 +4,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>列出日志</title>
+	<link rel="stylesheet" type="text/css" href="../static/menu.css">
+	<script src="../static/echarts.min.js"></script>
 	<style>
 		body {
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -37,36 +39,46 @@
 </head>
 
 <body>
-	<div class="container">
-		<h2>列出日志</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>IP</th>
-					<th>时间</th>
-					<th>token用量</th>
-					<th>使用模型</th>
-					<th>UserKey</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for item in data %}
-				<tr>
-					<td>{{item[0]}}</td>
-					<td>{{item[1]}}</td>
-					<td>{{item[2]}}</td>
-					<td>{{item[3]}}</td>
-					<td>{{item[4]}}</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
+	<div id="global-blur"></div>
+	<div id="sidebar" onmouseover="openNav()" onmouseout="closeNav()">
+		<a href="/admin" class="nodecoration">仪表盘</a>
+		<a href="/admin/list" class="nodecoration">列出所有Key</a>
+		<a href="/admin/lookupkey" class="nodecoration">查询密钥</a>
+		<a href="/admin/createkey" class="nodecoration">创建密钥</a>
+		<a href="/admin/log?show=500" class="nodecoration">查看日志</a>
+		<!-- 添加更多菜单项 -->
 	</div>
-	<hr/>
 
-	<script>
-		// 在这里可以添加一些交互逻辑，例如点击某个状态显示更多信息
-	</script>
+	<div id="main">
+		<div class="container">
+			<h2>列出日志</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>IP</th>
+						<th>时间</th>
+						<th>token用量</th>
+						<th>使用模型</th>
+						<th>UserKey</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in data %}
+					<tr>
+						<td>{{item[0]}}</td>
+						<td>{{item[1]}}</td>
+						<td>{{item[2]}}</td>
+						<td>{{item[3]}}</td>
+						<td>{{item[4]}}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+		<hr />
+	</div>
+
+	<script src="../static/menu.js"></script>
 </body>
 
 </html>

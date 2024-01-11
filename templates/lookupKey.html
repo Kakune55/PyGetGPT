@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>查询密钥</title>
+    <link rel="stylesheet" type="text/css" href="../static/menu.css">
+    <script src="../static/echarts.min.js"></script>
     <style>
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -21,28 +23,39 @@
 </head>
 
 <body>
-    <div class="container">
-        <h2>查询密钥</h2>
-        <form method="post">
-            <span>UserKey</span>
-            <input name="key" required>
-            <button type="submit">查询</button>
-        </form>
+    <div id="global-blur"></div>
+    <div id="sidebar" onmouseover="openNav()" onmouseout="closeNav()">
+        <a href="/admin" class="nodecoration">仪表盘</a>
+        <a href="/admin/list" class="nodecoration">列出所有Key</a>
+        <a href="/admin/lookupkey" class="nodecoration">查询密钥</a>
+        <a href="/admin/createkey" class="nodecoration">创建密钥</a>
+        <a href="/admin/log?show=500" class="nodecoration">查看日志</a>
+        <!-- 添加更多菜单项 -->
     </div>
-    {% if resq != "null" %}
-    <hr>
-    <div class="container">
-        <h2>执行结果</h2>
-        {% if resq == -99999 %}
-        <h4>未找到UserKey</h4>
-        {% else %}
-        <h4>配额剩余 {{ resq }}</h4>
+
+    <div id="main">
+        <div class="container">
+            <h2>查询密钥</h2>
+            <form method="post">
+                <span>UserKey</span>
+                <input name="key" required>
+                <button type="submit">查询</button>
+            </form>
+        </div>
+        {% if resq != "null" %}
+        <hr>
+        <div class="container">
+            <h2>执行结果</h2>
+            {% if resq == -99999 %}
+            <h4>未找到UserKey</h4>
+            {% else %}
+            <h4>配额剩余 {{ resq }}</h4>
+            {% endif %}
+        </div>
         {% endif %}
     </div>
-    {% endif %}
-    <script>
 
-    </script>
+    <script src="../static/menu.js"></script>
 </body>
 
 </html>

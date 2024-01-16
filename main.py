@@ -49,7 +49,7 @@ def post_data():
             code , output , tokenUsed = gpt4Turbo.service(userRequest['prompt']) 
 
     db.reduce_value(userRequest['userkey'], tokenUsed)
-    log.newLog(flask.request.headers.get('X-Forwarded-For'), tokenUsed, userRequest["model"], userRequest['userkey'])
+    log.newLog(flask.request.headers.get('X-Forwarded-For').split(",")[0], tokenUsed, userRequest["model"], userRequest['userkey'])
     return {"code":code,"output":output,"surplus":surplusToken}
 
 

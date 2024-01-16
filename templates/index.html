@@ -36,6 +36,7 @@
             </div>
         </div>
     </div>
+    
     <div id="chat-container">
         <div id="chat-messages"></div>
         <input type="text" id="user-input" placeholder="输入消息..."> <!-- 用户输入消息的输入框 -->
@@ -112,6 +113,7 @@
             document.getElementById("loadingico").style.display = "";
             const userMessage = userInput.value; // 获取用户输入的消息
             appendMessage('你', userMessage); // 在聊天界面中添加用户消息
+            chatMessages.scrollTop = chatMessages.scrollHeight; //自动滚动
             userInput.value = ''; // 清空输入框
 
             // 立即禁用发送按钮
@@ -241,6 +243,7 @@
                     userhs0 = message;
                     boths0 = data["output"];
                     loading = false;
+                    chatMessages.scrollTop = chatMessages.scrollHeight; //自动滚动
                     document.getElementById("loadingico").style.display = "none";
                     // 可以根据返回的数据执行相应的操作
                 })
@@ -249,6 +252,19 @@
                     alert('请求出错:', error);
                 });
         }
+
+        document.addEventListener('DOMContentLoaded', function () { //回车发送消息功能
+            function handleKey(event) {
+                if (event.keyCode === 13) {
+                    // 在这里执行你希望回车键触发的操作
+                    sendButton.click(); // 模拟按钮点击
+                }
+            }
+            // 绑定事件到输入框
+            userInput.addEventListener('keypress', handleKey);
+        });
+
+
     </script>
 </body>
 

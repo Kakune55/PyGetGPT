@@ -5,10 +5,13 @@
     left: 0;
     width: 100%;
     height: 100%;
-    backdrop-filter: blur(8px); /* 模糊度可以根据需要调整 */
+    backdrop-filter: blur(8px);
+    /* 模糊度可以根据需要调整 */
     transition: display;
-    z-index: 1; /* 保证遮罩在页面上方 */
-    pointer-events: none; /* 确保遮罩不影响下方元素的交互 */
+    z-index: 1;
+    /* 保证遮罩在页面上方 */
+    pointer-events: none;
+    /* 确保遮罩不影响下方元素的交互 */
     opacity: 0;
     transition: opacity 0.3s ease
 }
@@ -119,4 +122,50 @@
     background-color: #4caf50;
     transition: width 0.3s linear;
     /* 添加进度条宽度变化的线性过渡效果 */
+}
+
+/* --------------公告栏部分-------------- */
+
+/* 模态框样式 */
+.modal {
+    display: none;
+    /* 默认隐藏 */
+    position: fixed;
+    /* 固定位置 */
+    z-index: 1;
+    /* 位于顶层 */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* 宽度为全屏 */
+    height: 100%;
+    /* 高度为全屏 */
+    overflow: auto;
+    /* 如果需要滚动条，则启用 */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* 半透明背景 */
+}
+
+/* 模态框内容样式 */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    /* 位于页面中心 */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    /* 宽度 */
+    border-radius: 20px;
+}
+
+.modal-content button {
+    display: flex;
+    left: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
 }

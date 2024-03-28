@@ -36,7 +36,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="chat-container">
         <div id="chat-messages"></div>
         <input type="text" id="user-input" placeholder="输入消息..."> <!-- 用户输入消息的输入框 -->
@@ -52,7 +52,7 @@
         </div>
     </div>
 
-    <div id="popup-container" class="hidden"> <!--菜单部分-->
+    <div id="popup-container"> <!--菜单部分-->
         <div style="padding: 20px;">
             <button id="close-popup">关闭</button>
             <h1>设置</h1>
@@ -73,6 +73,17 @@
                 <button id="setUpButton2"
                     onclick="window.location.href = 'https://afdian.net/a/kaku55'">获取更多Token</button>
             </div>
+        </div>
+    </div>
+
+    <!-- 公告模态框 -->
+    <div id="announcementModal" class="modal">
+        <!-- 模态框内容 -->
+        <div class="modal-content">
+            <h2>公告标题</h2>
+            <p id="modal-text">这里是公告内容。</p>
+            <button id="closeModel">确定公告</button>
+            <input id="dontShowNextTime" type="checkbox"><label>有新消息前不再显示</label>
         </div>
     </div>
 

@@ -1,0 +1,6 @@
+pymysql
+requests
+flask
+zhipuai
+openai
+flask_cors
